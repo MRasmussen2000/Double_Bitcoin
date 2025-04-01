@@ -4,30 +4,40 @@ source env.tcl
 # Set the basename for configuration and floorplan files to match your design.
 set basename btc_dsha
 
-# Load/import design, constraints, and libraries.
-# Ensure that btc_dsha.global exists and has the proper settings for your design.
-source $designDir/$basename.global
+# Load configuration file if it exists.
+if { [file exists "$designDir/$basename.conf"] } {
+    loadConfig "$designDir/$basename.conf" 1
+} else {
+    puts "Warning: $designDir/$basename.conf not found. Continuing without it."
+}
+
+# Source the global settings file if it exists.
+if { [file exists "$designDir/$basename.global"] } {
+    source "$designDir/$basename.global"
+} else {
+    puts "Warning: $designDir/$basename.global not found. Continuing without it."
+}
+
+# Initialize the design.
 init_design
 
-# If you have a floorplan file, load it here. Otherwise, let Innovus determine the die size.
-# Uncomment the following if you have a floorplan specification:
+# If you have a floorplan specification file, load it here.
+# For example, if you have a floorplan file named btc_dsha.fp, uncomment the following line:
 # loadFPlan "$designDir/$basename.fp"
 
-# Perform timing analysis before placement.
+# Timing analysis before placement.
 timeDesign -preplace -outDir preplaceTimingReports
 
 # Set placement options.
-# Uncomment one of the following setPlaceMode commands based on your flow requirements:
-# Part 2: For one type of placement cut sequence
+# Uncomment one of the following lines as needed for your flow:
 # setPlaceMode -cutSequence VVVHHH -timingdriven true
-# Part 3: For an alternative placement cut sequence
 # setPlaceMode -cutSequence HHHVVV -timingdriven true
 
-# Set default delay limit and disable using floorplan hints during placement.
+# Disable floorplan hints during placement.
 set delaycal_use_default_delay_limit 1000
 setPlaceMode -place_design_floorplan_mode false
 
-# Run placement of the standard cells.
+# Place the standard cells.
 placeDesign
 
 # Verify the placement.
@@ -42,7 +52,7 @@ defOut -placement -routing -floorplan -netlist $outDir/placed.def
 # Launch the GUI to view the final design.
 win
 
-# Report bounding box net length for further analysis.
+# Report bounding box net length.
 reportNetLen
 
 # Perform timing analysis pre-CTS and save the reports.

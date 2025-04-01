@@ -1,0 +1,7 @@
+# btc_dsha.global
+# Global configuration settings for the btc_dsha design
+
+# Set the design name
+set design_name btc_dsha
+
+# Add additional global settings here if needed.
