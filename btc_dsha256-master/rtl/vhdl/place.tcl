@@ -1,17 +1,17 @@
-# Source the environment file to set paths such as $designDir and $outDir
+# Source the environment file to set paths such as $designDir and $outDir.
 source env.tcl
 
-# Set the basename for configuration and floorplan files to match your design.
+# Set the basename for configuration files to match your design.
 set basename btc_dsha
 
-# Load configuration file if it exists.
+# Load the design configuration file.
 if { [file exists "$designDir/$basename.conf"] } {
     loadConfig "$designDir/$basename.conf" 1
 } else {
     puts "Warning: $designDir/$basename.conf not found. Continuing without it."
 }
 
-# Source the global settings file if it exists.
+# Source the global settings file.
 if { [file exists "$designDir/$basename.global"] } {
     source "$designDir/$basename.global"
 } else {
@@ -21,19 +21,29 @@ if { [file exists "$designDir/$basename.global"] } {
 # Initialize the design.
 init_design
 
-# If you have a floorplan specification file, load it here.
-# For example, if you have a floorplan file named btc_dsha.fp, uncomment the following line:
+# Read the synthesized netlist.
+if { [file exists "$designDir/$init_verilog"] } {
+    read_netlist "$designDir/$init_verilog" -format verilog
+} else {
+    puts "Error: Netlist file $designDir/$init_verilog not found."
+    exit 1
+}
+
+# Set the top-level cell.
+set_top $init_top_cell
+
+# Optionally, if you have a floorplan specification, load it here:
 # loadFPlan "$designDir/$basename.fp"
 
-# Timing analysis before placement.
+# Perform pre-placement timing analysis.
 timeDesign -preplace -outDir preplaceTimingReports
 
 # Set placement options.
-# Uncomment one of the following lines as needed for your flow:
+# Uncomment one of the following based on your design flow:
 # setPlaceMode -cutSequence VVVHHH -timingdriven true
 # setPlaceMode -cutSequence HHHVVV -timingdriven true
 
-# Disable floorplan hints during placement.
+# Disable use of floorplan hints during placement.
 set delaycal_use_default_delay_limit 1000
 setPlaceMode -place_design_floorplan_mode false
 
@@ -55,7 +65,7 @@ win
 # Report bounding box net length.
 reportNetLen
 
-# Perform timing analysis pre-CTS and save the reports.
+# Perform pre-CTS timing analysis and save the reports.
 timeDesign -preCTS -outDir prectsTimingReports
 
 exit

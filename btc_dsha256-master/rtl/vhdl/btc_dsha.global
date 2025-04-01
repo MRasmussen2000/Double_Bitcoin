@@ -1,7 +1,35 @@
-# btc_dsha.global
-# Global configuration settings for the btc_dsha design
+# btc_dsha.global - Global settings for the btc_dsha design
 
-# Set the design name
-set design_name btc_dsha
+# Set the synthesized netlist file (produced by Design Compiler)
+set init_verilog "$designDir/btc_dsha_netlist_synopsys.v"
 
-# Add additional global settings here if needed.
+# Set the top-level cell name for the design.
+set init_top_cell "btc_dsha"
+
+# Specify the netlist type and that the top-level should be set.
+set init_design_netlisttype {Verilog}
+set init_design_settop {1}
+
+# Specify the LEF files for the design.
+set init_lef_file "$libDir/fsd0a_90nm_generic_core/lef/header8m026_V55.lef $libDir/fsd0a_90nm_generic_core/lef/fsd0a_a_generic_core.lef"
+
+# Set default delay values for extraction.
+set delaycal_use_default_delay_limit {1000}
+set delaycal_default_net_delay {1000.0ps}
+set delaycal_default_net_load {0.5pf}
+set delaycal_input_transition_delay {120.0ps}
+
+# Set shrink factor and library units.
+set extract_shrink_factor {1.0}
+setLibraryUnit -time 1ns
+setLibraryUnit -cap 1pf
+
+# Set power and ground net names.
+set init_pwr_net {VCC}
+set init_gnd_net {GND}
+
+# Set buffer assignment.
+set init_assign_buffer {0}
+
+# Specify the file for view definition (if used).
+set init_mmmc_file viewDefinition.tcl
