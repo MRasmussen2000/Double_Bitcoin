@@ -4,18 +4,19 @@ source env.tcl
 # Set the basename for configuration files to match your design.
 set basename btc_dsha
 
-# Load the design configuration file.
-if { [file exists "$designDir/$basename.conf"] } {
-    loadConfig "$designDir/$basename.conf" 1
-} else {
-    puts "Warning: $designDir/$basename.conf not found. Continuing without it."
-}
-
-# Source the global settings file.
+# Instead of loadConfig (which is no longer supported), simply source your global file.
 if { [file exists "$designDir/$basename.global"] } {
     source "$designDir/$basename.global"
 } else {
     puts "Warning: $designDir/$basename.global not found. Continuing without it."
+}
+
+# (Optional) If you have additional configuration settings previously in btc_dsha.conf,
+# consider sourcing that file here as well, or merge its settings into btc_dsha.global.
+if { [file exists "$designDir/$basename.conf"] } {
+    source "$designDir/$basename.conf"
+} else {
+    puts "Warning: $designDir/$basename.conf not found. Continuing without it."
 }
 
 # Initialize the design.
